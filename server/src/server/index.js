@@ -20,6 +20,7 @@
 import express from 'express';
 import { matchRoutes } from 'react-router-config';
 
+import proxy from 'express-http-proxy';
 import { render } from './utils';
 import { getStore } from '../store';
 import routes from '../Routes';
@@ -29,28 +30,40 @@ import routes from '../Routes';
 const app = express();
 app.use(express.static('public'));
 
+app.use('/api', proxy('http://47.95.113.63', {
+    proxyReqPathResolver: function (req) {
+        // var parts = req.url.split('?');
+        // var queryString = parts[1];
+        // var updatedPath = parts[0].replace(/test/, 'tent');
+        // return updatedPath + (queryString ? '?' + queryString : '');
+        console.log(req.url);
+
+        return 'ssr/api' + req.url;
+    }
+}));
+
 app.get('*', function (req, res) {
     let store = getStore();
 
     // 根据路由的路径，往store中添加数据
-    const matchedRoutes = matchRoutes(routes, req.path);
+    // const matchedRoutes = matchRoutes(routes, req.path);
 
-    const promises = [];
-    matchedRoutes.forEach((item => {
-        console.log('item111', item);
-        console.log('item112', item.route.loadData);
+    // const promises = [];
+    // matchedRoutes.forEach((item => {
+    //     console.log('item111', item);
+    //     console.log('item112', item.route.loadData);
 
-        if (item.route.loadData) {
-            item.route.loadData(store);
-        }
-    }));
+    //     if (item.route.loadData) {
+    //         item.route.loadData(store);
+    //     }
+    // }));
 
-    Promise.all(promises).then(() => {
-        console.log('matchedRoutesaaa1', matchedRoutes);
-        console.log('matchedRoutesaaa2', store.getState());
+    // Promise.all(promises).then(() => {
+    //     console.log('matchedRoutesaaa1', matchedRoutes);
+    //     console.log('matchedRoutesaaa2', store.getState());
 
-        res.send(render(store, routes, req));
-    });
+    res.send(render(store, routes, req));
+    // });
 });
 
 var server = app.listen(3000);

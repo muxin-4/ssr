@@ -12,6 +12,6 @@ export const getStore = () => {
 }
 
 export const getClientStore = () => {
-    const defaultState = window.context.this.state;
+    const defaultState = window.context.state;
     return createStore(reducer, defaultState, applyMiddleware(thunk));
 }

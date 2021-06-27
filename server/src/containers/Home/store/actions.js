@@ -1,16 +1,23 @@
 import axios from 'axios';
 import { CHANGE_LIST } from './contants';
+import clientAxios from '../../../client/request';
+import serverAxios from '../../../server/request';
 
 const changeList = (list) => ({
     type: CHANGE_LIST,
     list
 })
 
-export const getHomeList = () => {
+export const getHomeList = (server) => {
     return (dispatch) => {
         console.log('getHomeList');
 
-        // return axios.get
+        let requset = server ? serverAxios : clientAxios;
+
+        // return requset.get(
+        //     'api/new.json'
+        // ).then(res => {
+
 
         let list = [{
             id: 1,
@@ -18,5 +25,8 @@ export const getHomeList = () => {
         }];
 
         dispatch(changeList(list));
+        // });
+
+
     }
 }
